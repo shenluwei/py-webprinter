@@ -36,6 +36,62 @@ python app.py
 
 ![alt text](./readme/httpdemo.png)
 
+# 调用案例
+
+    jquery 请求案例，当然你也可以使用react 或者 vue 等主流框架来发起请求
+
+    $(function () {
+        //利用jquery发起异步的post请求
+        //请求格式需要用json格式发送格式为{"data":"encodeURIComponent后的打印内容","options":{/*打印选项暂未实现，后续迭代*/}}
+        $('#btnPrint').click(() => {
+            $.ajax({
+                url: '/print',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    data: encodeURIComponent($('#content').html())
+                }),
+                success: function (data) {
+                    alert('请求成功');
+                },
+                error: function (e) {
+                    alert(e.message);
+                }
+            });
+        })
+        $('#btnPreview').click(() => {
+            $.ajax({
+                url: '/preview',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    data: encodeURIComponent($('#content').html())
+                }),
+                success: function (data) {
+                    alert('请求成功');
+                },
+                error: function (e) {
+                    alert(e.message);
+                }
+            });
+        })
+        $('#btnDirectPrint').click(() => {
+            $.ajax({
+                url: '/direct_print',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    data: encodeURIComponent($('#content').html())
+                }),
+                success: function (data) {
+                    alert('请求成功');
+                },
+                error: function (e) {
+                    alert(e.message);
+                }
+            });
+        })
+    })
 # 调试教程
 python vscode 调试
 
