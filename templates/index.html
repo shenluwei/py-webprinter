@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>店家打印服务</title>
+    <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
+    <!--引入jQuery 文件-->
+    <script src="/static/jquery.min.js"></script>
+    <script>
+        $(function () {
+            //利用jquery发起异步的post请求
+            //请求格式需要用json格式发送格式为{"data":"encodeURIComponent后的打印内容","options":{/*打印选项暂未实现，后续迭代*/}}
+            $('#btnPrint').click(() => {
+                $.ajax({
+                    url: '/print',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        data: encodeURIComponent($('#content').html())
+                    }),
+                    success: function (data) {
+                        alert('请求成功');
+                    },
+                    error: function (e) {
+                        alert(e.message);
+                    }
+                });
+            })
+            $('#btnPreview').click(() => {
+                $.ajax({
+                    url: '/preview',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        data: encodeURIComponent($('#content').html())
+                    }),
+                    success: function (data) {
+                        alert('请求成功');
+                    },
+                    error: function (e) {
+                        alert(e.message);
+                    }
+                });
+            })
+            $('#btnDirectPrint').click(() => {
+                $.ajax({
+                    url: '/direct_print',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        data: encodeURIComponent($('#content').html())
+                    }),
+                    success: function (data) {
+                        alert('请求成功');
+                    },
+                    error: function (e) {
+                        alert(e.message);
+                    }
+                });
+            })
+        })
+    </script>
+</head>
+
+<body>
+    <div>
+        <button id="btnPrint">打印</button> 会调出打印选项
+        <br></br>
+        <button id="btnPreview">打印预览</button> 会调出打印预览
+        <br></br>
+        <button id="btnDirectPrint">直接打印</button> 不会调出打印选项，直接打印
+    </div>
+    <div id="content">
+        <p><img src="https://mugua-file.oss-cn-hangzhou.aliyuncs.com/assets/images/logo.png"></p>
+        <p>这是一个店家的打印工具</p>
+        <p>基础内容.</p>
+        <p><b>黑体.</b></p>
+        <p><i>斜体.</i></p>
+        <p>带样式区域演示</p>
+        <div style="width:100px;height:100px;border:1px solid #333;background-color:red;">带样式区域</div>
+        <p>大容量条码</p>
+        <p><svg class="" width="225px" height="142px" x="0px" y="0px" viewBox="0 0 225 142"
+                xmlns="http://www.w3.org/2000/svg" version="1.1" style="transform: translate(0,0)">
+                <rect x="0" y="0" width="225" height="142" style="fill:#ffffff;"></rect>
+                <g transform="translate(10, 10)" style="fill:#000000;">
+                    <rect x="7" y="0" width="2" height="100"></rect>
+                    <rect x="10" y="0" width="1" height="100"></rect>
+                    <rect x="13" y="0" width="3" height="100"></rect>
+                    <rect x="18" y="0" width="1" height="100"></rect>
+                    <rect x="20" y="0" width="2" height="100"></rect>
+                    <rect x="24" y="0" width="3" height="100"></rect>
+                    <rect x="29" y="0" width="1" height="100"></rect>
+                    <rect x="33" y="0" width="1" height="100"></rect>
+                    <rect x="35" y="0" width="2" height="100"></rect>
+                    <rect x="40" y="0" width="3" height="100"></rect>
+                    <rect x="46" y="0" width="1" height="100"></rect>
+                    <rect x="48" y="0" width="2" height="100"></rect>
+                    <rect x="51" y="0" width="1" height="100"></rect>
+                    <rect x="53" y="0" width="4" height="100"></rect>
+                    <rect x="58" y="0" width="3" height="100"></rect>
+                    <rect x="62" y="0" width="1" height="100"></rect>
+                    <rect x="65" y="0" width="2" height="100"></rect>
+                    <rect x="68" y="0" width="3" height="100"></rect>
+                    <rect x="73" y="0" width="1" height="100"></rect>
+                    <rect x="76" y="0" width="2" height="100"></rect>
+                    <rect x="80" y="0" width="1" height="100"></rect>
+                    <rect x="84" y="0" width="1" height="100"></rect>
+                    <rect x="87" y="0" width="1" height="100"></rect>
+                    <rect x="90" y="0" width="4" height="100"></rect>
+                    <rect x="95" y="0" width="1" height="100"></rect>
+                    <rect x="97" y="0" width="2" height="100"></rect>
+                    <rect x="101" y="0" width="1" height="100"></rect>
+                    <rect x="106" y="0" width="4" height="100"></rect>
+                    <rect x="112" y="0" width="1" height="100"></rect>
+                    <rect x="114" y="0" width="1" height="100"></rect>
+                    <rect x="117" y="0" width="1" height="100"></rect>
+                    <rect x="120" y="0" width="1" height="100"></rect>
+                    <rect x="123" y="0" width="4" height="100"></rect>
+                    <rect x="128" y="0" width="4" height="100"></rect>
+                    <rect x="134" y="0" width="1" height="100"></rect>
+                    <rect x="136" y="0" width="1" height="100"></rect>
+                    <rect x="139" y="0" width="1" height="100"></rect>
+                    <rect x="141" y="0" width="3" height="100"></rect>
+                    <rect x="145" y="0" width="4" height="100"></rect>
+                    <rect x="150" y="0" width="2" height="100"></rect>
+                    <rect x="156" y="0" width="1" height="100"></rect>
+                    <rect x="158" y="0" width="1" height="100"></rect>
+                    <rect x="161" y="0" width="2" height="100"></rect>
+                    <rect x="164" y="0" width="4" height="100"></rect>
+                    <rect x="169" y="0" width="2" height="100"></rect>
+                    <rect x="172" y="0" width="1" height="100"></rect>
+                    <rect x="175" y="0" width="2" height="100"></rect>
+                    <rect x="178" y="0" width="1" height="100"></rect>
+                    <rect x="183" y="0" width="2" height="100"></rect>
+                    <rect x="188" y="0" width="3" height="100"></rect>
+                    <rect x="192" y="0" width="1" height="100"></rect>
+                    <rect x="194" y="0" width="2" height="100"></rect><text style="font: 20px monospace"
+                        text-anchor="start" x="0" y="122">123456-&amp;rewrw7890</text>
+                </g>
+            </svg></p>
+        <p></p>
+        <p>69码演示-EAN13</p>
+        <p><svg class="" width="127px" height="62px" x="0px" y="0px" viewBox="0 0 127 62"
+                xmlns="http://www.w3.org/2000/svg" version="1.1" style="transform: translate(0,0)">
+                <rect x="0" y="0" width="127" height="62" style="fill:#ffffff;"></rect>
+                <g transform="translate(10, 10)" style="fill:#000000;"><text style="font: 10px monospace"
+                        text-anchor="start" x="0" y="42">6</text></g>
+                <g transform="translate(22, 10)" style="fill:#000000;">
+                    <rect x="0" y="0" width="1" height="37"></rect>
+                    <rect x="2" y="0" width="1" height="37"></rect><text style="font: 20px monospace"
+                        text-anchor="middle" x="1.5" y="59"></text>
+                </g>
+                <g transform="translate(25, 10)" style="fill:#000000;">
+                    <rect x="3" y="0" width="1" height="30"></rect>
+                    <rect x="5" y="0" width="2" height="30"></rect>
+                    <rect x="8" y="0" width="1" height="30"></rect>
+                    <rect x="11" y="0" width="3" height="30"></rect>
+                    <rect x="15" y="0" width="2" height="30"></rect>
+                    <rect x="19" y="0" width="2" height="30"></rect>
+                    <rect x="22" y="0" width="2" height="30"></rect>
+                    <rect x="26" y="0" width="2" height="30"></rect>
+                    <rect x="30" y="0" width="2" height="30"></rect>
+                    <rect x="34" y="0" width="1" height="30"></rect>
+                    <rect x="37" y="0" width="2" height="30"></rect>
+                    <rect x="41" y="0" width="1" height="30"></rect><text style="font: 10px monospace"
+                        text-anchor="middle" x="21" y="42">901111</text>
+                </g>
+                <g transform="translate(67, 10)" style="fill:#000000;">
+                    <rect x="1" y="0" width="1" height="37"></rect>
+                    <rect x="3" y="0" width="1" height="37"></rect><text style="font: 20px monospace"
+                        text-anchor="middle" x="2.5" y="59"></text>
+                </g>
+                <g transform="translate(72, 10)" style="fill:#000000;">
+                    <rect x="0" y="0" width="2" height="30"></rect>
+                    <rect x="4" y="0" width="2" height="30"></rect>
+                    <rect x="7" y="0" width="2" height="30"></rect>
+                    <rect x="11" y="0" width="2" height="30"></rect>
+                    <rect x="14" y="0" width="2" height="30"></rect>
+                    <rect x="18" y="0" width="2" height="30"></rect>
+                    <rect x="21" y="0" width="2" height="30"></rect>
+                    <rect x="25" y="0" width="2" height="30"></rect>
+                    <rect x="28" y="0" width="2" height="30"></rect>
+                    <rect x="32" y="0" width="2" height="30"></rect>
+                    <rect x="35" y="0" width="1" height="30"></rect>
+                    <rect x="38" y="0" width="1" height="30"></rect><text style="font: 10px monospace"
+                        text-anchor="middle" x="21" y="42">111118</text>
+                </g>
+                <g transform="translate(114, 10)" style="fill:#000000;">
+                    <rect x="0" y="0" width="1" height="37"></rect>
+                    <rect x="2" y="0" width="1" height="37"></rect><text style="font: 20px monospace"
+                        text-anchor="middle" x="1.5" y="59"></text>
+                </g>
+            </svg></p>
+        <p>旋转演示</p>
+        <p>
+            <svg class="" width="127px" height="62px" x="0px" y="0px" viewBox="0 0 127 62"
+                xmlns="http://www.w3.org/2000/svg" version="1.1"
+                style="transform: rotate(270deg); transform-origin: center bottom;">
+                <rect x="0" y="0" width="127" height="62" style="fill:#ffffff;"></rect>
+                <g transform="translate(10, 10)" style="fill:#000000;"><text style="font: 10px monospace"
+                        text-anchor="start" x="0" y="42">6</text></g>
+                <g transform="translate(22, 10)" style="fill:#000000;">
+                    <rect x="0" y="0" width="1" height="37"></rect>
+                    <rect x="2" y="0" width="1" height="37"></rect><text style="font: 20px monospace"
+                        text-anchor="middle" x="1.5" y="59"></text>
+                </g>
+                <g transform="translate(25, 10)" style="fill:#000000;">
+                    <rect x="3" y="0" width="1" height="30"></rect>
+                    <rect x="5" y="0" width="2" height="30"></rect>
+                    <rect x="8" y="0" width="1" height="30"></rect>
+                    <rect x="11" y="0" width="3" height="30"></rect>
+                    <rect x="15" y="0" width="2" height="30"></rect>
+                    <rect x="19" y="0" width="2" height="30"></rect>
+                    <rect x="22" y="0" width="2" height="30"></rect>
+                    <rect x="26" y="0" width="2" height="30"></rect>
+                    <rect x="30" y="0" width="2" height="30"></rect>
+                    <rect x="34" y="0" width="1" height="30"></rect>
+                    <rect x="37" y="0" width="2" height="30"></rect>
+                    <rect x="41" y="0" width="1" height="30"></rect><text style="font: 10px monospace"
+                        text-anchor="middle" x="21" y="42">901111</text>
+                </g>
+                <g transform="translate(67, 10)" style="fill:#000000;">
+                    <rect x="1" y="0" width="1" height="37"></rect>
+                    <rect x="3" y="0" width="1" height="37"></rect><text style="font: 20px monospace"
+                        text-anchor="middle" x="2.5" y="59"></text>
+                </g>
+                <g transform="translate(72, 10)" style="fill:#000000;">
+                    <rect x="0" y="0" width="2" height="30"></rect>
+                    <rect x="4" y="0" width="2" height="30"></rect>
+                    <rect x="7" y="0" width="2" height="30"></rect>
+                    <rect x="11" y="0" width="2" height="30"></rect>
+                    <rect x="14" y="0" width="2" height="30"></rect>
+                    <rect x="18" y="0" width="2" height="30"></rect>
+                    <rect x="21" y="0" width="2" height="30"></rect>
+                    <rect x="25" y="0" width="2" height="30"></rect>
+                    <rect x="28" y="0" width="2" height="30"></rect>
+                    <rect x="32" y="0" width="2" height="30"></rect>
+                    <rect x="35" y="0" width="1" height="30"></rect>
+                    <rect x="38" y="0" width="1" height="30"></rect><text style="font: 10px monospace"
+                        text-anchor="middle" x="21" y="42">111118</text>
+                </g>
+                <g transform="translate(114, 10)" style="fill:#000000;">
+                    <rect x="0" y="0" width="1" height="37"></rect>
+                    <rect x="2" y="0" width="1" height="37"></rect><text style="font: 20px monospace"
+                        text-anchor="middle" x="1.5" y="59"></text>
+                </g>
+            </svg>
+        </p>
+        <br></br>
+        <p>高级二维码</p>
+        <p>
+            <svg height="160" width="160" viewBox="0 0 23 23" role="img">
+                <title>690111111111</title>
+                <path fill="yellow" d="M0,0 h23v23H0z" shape-rendering="crispEdges"></path>
+                <path fill="red"
+                    d="M1 1h7v1H1zM9 1h1v1H9zM12 1h1v1H12zM15,1 h7v1H15zM1 2h1v1H1zM7 2h1v1H7zM10 2h4v1H10zM15 2h1v1H15zM21,2 h1v1H21zM1 3h1v1H1zM3 3h3v1H3zM7 3h1v1H7zM11 3h2v1H11zM15 3h1v1H15zM17 3h3v1H17zM21,3 h1v1H21zM1 4h1v1H1zM3 4h3v1H3zM7 4h1v1H7zM9 4h2v1H9zM12 4h2v1H12zM15 4h1v1H15zM17 4h3v1H17zM21,4 h1v1H21zM1 5h1v1H1zM3 5h3v1H3zM7 5h1v1H7zM10 5h2v1H10zM13 5h1v1H13zM15 5h1v1H15zM17 5h3v1H17zM21,5 h1v1H21zM1 6h1v1H1zM7 6h1v1H7zM10 6h1v1H10zM15 6h1v1H15zM21,6 h1v1H21zM1 7h7v1H1zM9 7h1v1H9zM11 7h1v1H11zM13 7h1v1H13zM15,7 h7v1H15zM10 8h2v1H10zM13 8h1v1H13zM3 9h1v1H3zM5 9h3v1H5zM14 9h1v1H14zM18 9h1v1H18zM21,9 h1v1H21zM1 10h3v1H1zM5 10h2v1H5zM8 10h1v1H8zM14 10h3v1H14zM18 10h1v1H18zM20,10 h2v1H20zM1 11h1v1H1zM4 11h1v1H4zM6 11h2v1H6zM16 11h1v1H16zM18 11h2v1H18zM21,11 h1v1H21zM1 12h2v1H1zM4 12h3v1H4zM8 12h1v1H8zM14 12h1v1H14zM16 12h4v1H16zM21,12 h1v1H21zM1 13h5v1H1zM7 13h2v1H7zM15 13h2v1H15zM18 13h1v1H18zM9 14h4v1H9zM16 14h1v1H16zM19,14 h3v1H19zM1 15h7v1H1zM10 15h2v1H10zM17 15h1v1H17zM19 15h1v1H19zM21,15 h1v1H21zM1 16h1v1H1zM7 16h1v1H7zM9 16h2v1H9zM13 16h1v1H13zM15 16h2v1H15zM21,16 h1v1H21zM1 17h1v1H1zM3 17h3v1H3zM7 17h1v1H7zM9 17h3v1H9zM13 17h1v1H13zM15 17h1v1H15zM17 17h1v1H17zM21,17 h1v1H21zM1 18h1v1H1zM3 18h3v1H3zM7 18h1v1H7zM10 18h3v1H10zM14 18h1v1H14zM16 18h1v1H16zM19 18h2v1H19zM1 19h1v1H1zM3 19h3v1H3zM7 19h1v1H7zM9 19h1v1H9zM11 19h1v1H11zM16 19h1v1H16zM18 19h1v1H18zM21,19 h1v1H21zM1 20h1v1H1zM7 20h1v1H7zM11 20h1v1H11zM15 20h1v1H15zM17 20h2v1H17zM1 21h7v1H1zM11 21h4v1H11zM18 21h2v1H18zM21,21 h1v1H21z"
+                    shape-rendering="crispEdges"></path>
+                <image href="https://mugua-file.oss-cn-hangzhou.aliyuncs.com/assets/logo.png" height="4.3125"
+                    width="4.3125" x="9.34375" y="9.34375" preserveAspectRatio="none" opacity="1"></image>
+            </svg>
+        </p>
+    </div>
+</body>
+
+</html>
