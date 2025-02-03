@@ -188,7 +188,9 @@ pyinstaller文档:https://pyinstaller.org/en/stable/usage.html
 打包命令
 
 pyinstaller --add-data "templates:./templates" --add-data "static:./static" --collect-all gunicorn --icon=install.icns --name dpPrinter --clean --windowed app.py 
-   
+
+打出来的包有点大，哪位Python高手看看能否帮忙调优一下
+
 mac app效果演示
 
 ![alt text](./readme/macdemo.png)
