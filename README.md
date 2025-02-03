@@ -30,9 +30,9 @@ python app.py
 
 本地https访问: https://127.0.0.1:5443
 
-域名http访问: http://localhost.dianjia.io:5100
+域名http访问: http://localhost.dianjia.io:5100 //这个域名域名访问模式，需要开发者有自己的域名，当然也可以直接使用我们的域名
 
-域名https访问: https://localhost.dianjia.io:5443
+域名https访问: https://localhost.dianjia.io:5443 //这个域名域名访问模式，需要开发者有自己的域名，当然也可以直接使用我们的域名
 
 # 调试教程
 python vscode 调试
@@ -70,7 +70,7 @@ launch.json 文件通常会自动为你生成一些基本的配置。你可以�
             "name": "Python 调试程序: 当前文件",
             "type": "debugpy",
             "request": "launch",
-            "program": "/Users/Shared/git/front/python-printer/app.py",
+            "program": "${替换成自己的路径}/py-webprinter/app.py",
             "console": "integratedTerminal"
         }
     ]
@@ -91,7 +91,7 @@ A记录：localhost->127.0.0.1
 
 应用需要支持定期监控证书，并定期更新证书，当识别到证书有更新，则更新证书
 
-更新的证书店加公司会定期发布到OSS对应的开发目录
+更新的证书店加公司会定期发布到OSS对应的公开目录，当然这个文件可以自己另行处理
 
 http://mugua-file.oss-cn-hangzhou.aliyuncs.com/ssl/private_key.pem
     
@@ -133,6 +133,10 @@ pyinstaller --add-data "templates:./templates" --add-data "static:./static" --co
    
 
 # 其他可选安装，类似于制作java 的jar包
+
+pip install setuptools
+
+pip install wheel
 
 python setup.py sdist bdist_wheel
 
