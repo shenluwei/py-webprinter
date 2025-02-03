@@ -34,6 +34,8 @@ python app.py
 
 域名https访问: https://localhost.dianjia.io:5443 //这个域名域名访问模式，需要开发者有自己的域名，当然也可以直接使用我们的域名
 
+![alt text](./readme/httpdemo.png)
+
 # 调试教程
 python vscode 调试
 
@@ -131,6 +133,10 @@ pyinstaller文档:https://pyinstaller.org/en/stable/usage.html
 
 pyinstaller --add-data "templates:./templates" --add-data "static:./static" --collect-all gunicorn --icon=install.icns --name dpPrinter --clean --windowed app.py 
    
+mac app效果演示
+
+![alt text](./readme/macdemo.png)
+
 
 # 其他可选安装，类似于制作java 的jar包
 
