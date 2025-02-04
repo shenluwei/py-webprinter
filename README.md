@@ -41,57 +41,81 @@ python app.py
     jquery 请求案例，当然你也可以使用react 或者 vue 等主流框架来发起请求
 
     $(function () {
-        //利用jquery发起异步的post请求
-        //请求格式需要用json格式发送格式为{"data":"encodeURIComponent后的打印内容","options":{/*打印选项暂未实现，后续迭代*/}}
-        $('#btnPrint').click(() => {
-            $.ajax({
-                url: '/print',
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify({
-                    data: encodeURIComponent($('#content').html())
-                }),
-                success: function (data) {
-                    alert('请求成功');
-                },
-                error: function (e) {
-                    alert(e.message);
-                }
-            });
+            //利用jquery发起异步的post请求
+            //请求格式需要用json格式发送格式为{"data":"encodeURIComponent后的打印内容","options":{/*打印选项暂未实现，后续迭代*/}}
+            $('#btnPrint').click(() => {
+                $.ajax({
+                    url: '/print',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        content: encodeURIComponent($('#content').html()),
+                        options: {
+                            width: 210,//纸张宽度 单位mm
+                            height: 297,//纸张宽度 单位mm
+                            paddingLeft: 10,//纸张左边距 单位mm
+                            paddingTop: 10,//纸张顶边距 单位mm
+                            paddingRight: 10,//纸张右边距 单位mm
+                            paddingBottom: 10,//纸张底边距 单位mm
+                        }
+                    }),
+                    success: function (data) {
+                        alert('请求成功');
+                    },
+                    error: function (e) {
+                        alert(e.message);
+                    }
+                });
+            })
+            $('#btnPreview').click(() => {
+                $.ajax({
+                    url: '/preview',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        content: encodeURIComponent($('#content').html()),
+                        options: {
+                            width: 210,//纸张宽度 单位mm
+                            height: 297,//纸张宽度 单位mm
+                            paddingLeft: 10,//纸张左边距 单位mm
+                            paddingTop: 10,//纸张顶边距 单位mm
+                            paddingRight: 10,//纸张右边距 单位mm
+                            paddingBottom: 10,//纸张底边距 单位mm
+                        }
+                    }),
+                    success: function (data) {
+                        alert('请求成功');
+                    },
+                    error: function (e) {
+                        alert(e.message);
+                    }
+                });
+            })
+            $('#btnDirectPrint').click(() => {
+                $.ajax({
+                    url: '/direct_print',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        content: encodeURIComponent($('#content').html()),
+                        options: {
+                            width: 210,//纸张宽度 单位mm
+                            height: 297,//纸张宽度 单位mm
+                            paddingLeft: 10,//纸张左边距 单位mm
+                            paddingTop: 10,//纸张顶边距 单位mm
+                            paddingRight: 10,//纸张右边距 单位mm
+                            paddingBottom: 10,//纸张底边距 单位mm
+                        }
+                    }),
+                    success: function (data) {
+                        alert('请求成功');
+                    },
+                    error: function (e) {
+                        alert(e.message);
+                    }
+                });
+            })
         })
-        $('#btnPreview').click(() => {
-            $.ajax({
-                url: '/preview',
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify({
-                    data: encodeURIComponent($('#content').html())
-                }),
-                success: function (data) {
-                    alert('请求成功');
-                },
-                error: function (e) {
-                    alert(e.message);
-                }
-            });
-        })
-        $('#btnDirectPrint').click(() => {
-            $.ajax({
-                url: '/direct_print',
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify({
-                    data: encodeURIComponent($('#content').html())
-                }),
-                success: function (data) {
-                    alert('请求成功');
-                },
-                error: function (e) {
-                    alert(e.message);
-                }
-            });
-        })
-    })
 # 调试教程
 python vscode 调试
 
