@@ -11,46 +11,27 @@ flaskApp = Flask(__name__,template_folder=run_path+'/templates')
 @flaskApp.route('/')
 def index():
     return render_template('index.html', message="欢迎来到我的主页")
+def getCmd(request):
+    content = request.json.get('content') if request.json.get('content') != None else ""
+    options = request.json.get('options') if request.json.get('options') != None else {}
+    cmd={"html":unquote(content),"options":options}
+    return cmd
 # 预览
 @flaskApp.route('/preview', methods=['POST'])
 def preview():
-    data_to_print = request.json.get('data')
-    if not data_to_print:
-        return jsonify({"error": "No data to print"}), 400
-    preview_queue.put(unquote(data_to_print))  # 将数据放入队列中
+    preview_queue.put(getCmd(request))  # 将数据放入队列中
     return jsonify({"success": True}), 200
 # 打印
 @flaskApp.route('/print', methods=['POST'])
 def print():
-    data_to_print = request.json.get('data')
-    if not data_to_print:
-        return jsonify({"error": "No data to print"}), 400
-    print_queue.put(unquote(data_to_print))  # 将数据放入队列中
+    print_queue.put(getCmd(request))  # 将数据放入队列中
     return jsonify({"success": True}), 200
 # 直接打印
 @flaskApp.route('/direct_print', methods=['POST'])
 def direct_print():
-    data_to_print = request.json.get('data')
-    if not data_to_print:
-        return jsonify({"error": "No data to print"}), 400
-    direct_print_queue.put(unquote(data_to_print))  # 将数据放入队列中
+    direct_print_queue.put(getCmd(request))  # 将数据放入队列中
     return jsonify({"success": True}), 200
-def download_file_to_tempfile(url):
-    # 创建一个临时文件
-    with tempfile.NamedTemporaryFile(delete=False, mode='wb') as temp_file:
-        # 发送 HTTP GET 请求下载文件
-        response = requests.get(url, stream=True, verify=False)
-        # 检查请求是否成功
-        if response.status_code == 200:
-            # 将文件内容写入临时文件
-            for chunk in response.iter_content(chunk_size=8192):
-                temp_file.write(chunk)
-            
-            # 返回临时文件的路径
-            return temp_file.name
-        else:
-            raise Exception(f"Failed to download file. Status code: {response.status_code}")
-        
+
 class GunicornApp(BaseApplication):
     def __init__(self, app, options=None):
         self.options = options or {}
@@ -79,10 +60,25 @@ def run_http():
 
 # 启动 HTTPS 服务（端口 443）
 def run_https():
+    def downloadFileToTempfile(url):
+        # 创建一个临时文件
+        with tempfile.NamedTemporaryFile(delete=False, mode='wb') as temp_file:
+            # 发送 HTTP GET 请求下载文件
+            response = requests.get(url, stream=True, verify=False)
+            # 检查请求是否成功
+            if response.status_code == 200:
+                # 将文件内容写入临时文件
+                for chunk in response.iter_content(chunk_size=8192):
+                    temp_file.write(chunk)
+                
+                # 返回临时文件的路径
+                return temp_file.name
+            else:
+                raise Exception(f"Failed to download file. Status code: {response.status_code}")
     try:
         # 创建一个临时文件，用于保存下载的文件
-        key_temp_path = download_file_to_tempfile('http://mugua-file.oss-cn-hangzhou.aliyuncs.com/ssl/private_key.pem')
-        cert_temp_path = download_file_to_tempfile('http://mugua-file.oss-cn-hangzhou.aliyuncs.com/ssl/certificate.pem')
+        key_temp_path = downloadFileToTempfile('http://mugua-file.oss-cn-hangzhou.aliyuncs.com/ssl/private_key.pem')
+        cert_temp_path = downloadFileToTempfile('http://mugua-file.oss-cn-hangzhou.aliyuncs.com/ssl/certificate.pem')
         options = {
             "bind": ["0.0.0.0:5443"],  # 绑定 HTTPS 端口
             'keyfile': key_temp_path,

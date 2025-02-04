@@ -18,7 +18,15 @@
                     type: 'POST',
                     contentType: 'application/json',
                     data: JSON.stringify({
-                        data: encodeURIComponent($('#content').html())
+                        content: encodeURIComponent($('#content').html()),
+                        options: {
+                            width: 210,//纸张宽度 单位mm
+                            height: 297,//纸张宽度 单位mm
+                            paddingLeft: 10,//纸张左边距 单位mm
+                            paddingTop: 10,//纸张顶边距 单位mm
+                            paddingRight: 10,//纸张右边距 单位mm
+                            paddingBottom: 10,//纸张底边距 单位mm
+                        }
                     }),
                     success: function (data) {
                         alert('请求成功');
@@ -34,7 +42,15 @@
                     type: 'POST',
                     contentType: 'application/json',
                     data: JSON.stringify({
-                        data: encodeURIComponent($('#content').html())
+                        content: encodeURIComponent($('#content').html()),
+                        options: {
+                            width: 210,//纸张宽度 单位mm
+                            height: 297,//纸张宽度 单位mm
+                            paddingLeft: 10,//纸张左边距 单位mm
+                            paddingTop: 10,//纸张顶边距 单位mm
+                            paddingRight: 10,//纸张右边距 单位mm
+                            paddingBottom: 10,//纸张底边距 单位mm
+                        }
                     }),
                     success: function (data) {
                         alert('请求成功');
@@ -50,7 +66,15 @@
                     type: 'POST',
                     contentType: 'application/json',
                     data: JSON.stringify({
-                        data: encodeURIComponent($('#content').html())
+                        content: encodeURIComponent($('#content').html()),
+                        options: {
+                            width: 210,//纸张宽度 单位mm
+                            height: 297,//纸张宽度 单位mm
+                            paddingLeft: 10,//纸张左边距 单位mm
+                            paddingTop: 10,//纸张顶边距 单位mm
+                            paddingRight: 10,//纸张右边距 单位mm
+                            paddingBottom: 10,//纸张底边距 单位mm
+                        }
                     }),
                     success: function (data) {
                         alert('请求成功');

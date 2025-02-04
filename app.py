@@ -1,8 +1,7 @@
 import sys
-import time 
 import os
-from PyQt6.QtGui import QIcon,QAction
-from PyQt6.QtCore import QTimer,Qt,QEventLoop
+from PyQt6.QtGui import QIcon,QAction,QPageLayout, QPageSize
+from PyQt6.QtCore import QTimer,Qt,QEventLoop,QSizeF,QMarginsF
 from PyQt6.QtWidgets import QApplication,QMainWindow,QSystemTrayIcon,QTextEdit, QVBoxLayout
 from PyQt6.QtWidgets import QWidget, QPushButton,QSystemTrayIcon, QMenu, QMessageBox
 from PyQt6.QtPrintSupport import QPrinter, QPrintDialog,QPrintPreviewDialog
@@ -30,7 +29,7 @@ class PrintApp(QMainWindow):
         self.previewQueue = previewQueue
         self.printQueue = printQueue
         self.directPrintQueue = directPrintQueue
-        self.previewContent = ""
+        self.previewCmd = ""
         self.initUI()
         self.create_tray_icon()
 
@@ -223,14 +222,14 @@ class PrintApp(QMainWindow):
             loop.quit()
 
     #打印的核心代码
-    def printDocument(self, printer,data):
+    def printDocument(self, printer,html):
         webView = QWebEngineView()
         webView.setFixedWidth(1)
         webView.setFixedHeight(1)
         # 加载 HTML 文本并处理图片
         # html_loader = HtmlImageLoader(printer,html_content, doc)
         # doc.setHtml(html_loader.getDocument())
-        webView.setHtml(data)
+        webView.setHtml(html)
         self.mainLayout.addWidget(webView)
         # QEventLoop 的作用
         # QEventLoop 允许你创建一个局部的事件循环，用于等待某个异步操作完成。它的典型使用场景包括：
@@ -242,54 +241,83 @@ class PrintApp(QMainWindow):
         loop.exec()
         self.mainLayout.removeWidget(webView)
         webView.deleteLater()
+    def getQPrinter(self,options):
+        pageRect = options.get('pageRect')
+        resolution = options.get('resolution')
+        printer = QPrinter(QPrinter.PrinterMode.HighResolution)
+
+        if pageRect:
+            # 单位为毫米
+            width=pageRect.get('width') if pageRect.get('width') != None else 100
+            height=pageRect.get('height') if pageRect.get('height') != None else 200
+
+            paddingLeft=pageRect.get('paddingLeft') if pageRect.get('paddingLeft') != None else 0
+            paddingTop=pageRect.get('paddingTop') if pageRect.get('paddingTop') != None else 0
+            paddingRight=pageRect.get('paddingRight') if pageRect.get('paddingRight') != None else 0
+            paddingBottom=pageRect.get('paddingBottom') if pageRect.get('paddingBottom') != None else 0
+
+            pageSize = QPageSize(QSizeF(width, height), QPageSize.Unit.Millimeter)
+            pageMargin = QMarginsF(paddingLeft, paddingTop, paddingRight, paddingBottom)
+            printer.setPageSize(pageSize)
+            printer.setPageOrientation(QPageLayout.Orientation.Portrait)
+            printer.setPageMargins(pageMargin, QPageLayout.Unit.Millimeter)
+
+        if resolution:
+            printer.setResolution(resolution)  # 设置打印机分辨率为300 DPI
+        else:
+            printer.setResolution(300)
+            
+        return printer
     # 打印预览
     def handle_print_preview(self):
-        printer = QPrinter(QPrinter.PrinterMode.HighResolution)
-        printer.setResolution(300)  # 设置打印机分辨率为300 DPI
+        options = self.previewCmd.get('options')
+        html = self.previewCmd.get('html')
+        printer=self.getQPrinter(options)
         previewDialog = QPrintPreviewDialog(printer, self)
-
-        previewDialog.paintRequested.connect(lambda printer: self.printDocument(printer,self.previewContent))
+        previewDialog.paintRequested.connect(lambda printer: self.printDocument(printer,html))
         previewDialog.setWindowFlags(previewDialog.windowFlags() | Qt.WindowType.WindowStaysOnTopHint)
         previewDialog.exec()
         previewDialog.raise_()
         previewDialog.activateWindow()
     # 打印
-    def handle_print(self,data):
-        printer = QPrinter(QPrinter.PrinterMode.HighResolution)
-        printer.setResolution(300)  # 设置打印机分辨率为300 DPI
+    def handle_print(self,cmd):
+        options = self.previewCmd.get('options')
+        html = self.previewCmd.get('html')
+        printer=self.getQPrinter(options)
         dialog = QPrintDialog(printer, self)
         if dialog.exec() == QPrintDialog.DialogCode.Accepted:
-            self.printDocument(printer,data)
+            self.printDocument(printer,html)
         # 设置对话框置顶显示
         dialog.setWindowFlags(dialog.windowFlags() | Qt.WindowType.WindowStaysOnTopHint)
         dialog.raise_()
         dialog.activateWindow()
     # 直接打印
-    def handle_direct_print(self,data):
-        printer = QPrinter(QPrinter.PrinterMode.HighResolution)
-        printer.setResolution(300)  # 设置打印机分辨率为300 DPI
-        self.printDocument(printer,data)
+    def handle_direct_print(self,cmd):
+        options = self.previewCmd.get('options')
+        html = self.previewCmd.get('html')
+        printer=self.getQPrinter(options)
+        self.printDocument(printer,html)
 
     #检测预览队列
     def check_preview_queue(self):
         if not self.previewQueue.empty():
-            self.previewContent = self.previewQueue.get()
+            self.previewCmd = self.previewQueue.get()
             self.textEdit.setText("接收到预览指令")
             self.handle_print_preview()
             self.textEdit.setText("正在等待打印请求...")
      #检测打印队列
     def check_print_queue(self):
         if not self.printQueue.empty():
-            data = self.printQueue.get()
+            cmd = self.printQueue.get()
             self.textEdit.setText("接收到打印指令")
-            self.handle_print(data)
+            self.handle_print(cmd)
             self.textEdit.setText("正在等待打印请求...")
      #检测直接打印队列
     def check_direct_print_queue(self):
         if not self.directPrintQueue.empty():
-            data = self.directPrintQueue.get()
+            cmd = self.directPrintQueue.get()
             self.textEdit.setText("接收到直接打印指令")
-            self.handle_direct_print(data)
+            self.handle_direct_print(cmd)
             self.textEdit.setText("正在等待打印请求...")
 
 if __name__ == '__main__':
