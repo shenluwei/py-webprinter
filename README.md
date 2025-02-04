@@ -40,23 +40,124 @@ python app.py
 
     jquery 请求案例，当然你也可以使用react 或者 vue 等主流框架来发起请求
 
-    $(function () {
-            //利用jquery发起异步的post请求
-            //请求格式需要用json格式发送格式为{"data":"encodeURIComponent后的打印内容","options":{/*打印选项暂未实现，后续迭代*/}}
-            $('#btnPrint').click(() => {
-                $.ajax({
-                    url: '/print',
+        //利用jquery发起异步的post请求
+        //请求格式需要用json格式发送格式为{"printKey":new Date().getTime(),"content":"encodeURIComponent后的打印内容","options":{}}
+
+            //获取打印机列表
+            $.ajax({
+                url: '/printer_status',
+                type: 'POST',
+                contentType: 'application/json',
+                success: function (data) {
+                    alert(JSON.stringify(data));
+                },
+                error: function (e) {
+                    alert(e.message);
+                }
+            });
+            //获取打印任务
+            $.ajax({
+                url: '/print_tasks',
+                type: 'POST',
+                contentType: 'application/json',
+                success: function (data) {
+                    alert(JSON.stringify(data));
+                },
+                error: function (e) {
+                    alert(e.message);
+                }
+            });
+            //打印
+            $.ajax({
+                url: '/print',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    printKey: new Date().getTime(),//可以使用业务的唯一标识，用于查询打印状态
+                    content: encodeURIComponent($('#content').html()),
+                    options: {
+                        //printerName:"HP_LaserJet_400_M401dne__AFFC44_",//打印机名称可以通过调用printer_status接口获取
+                        pageRect: {
+                            width: 210,//纸张宽度 单位mm
+                            height: 297,//纸张宽度 单位mm
+                        },
+                        margins: {
+                            left: 10,//纸张左边距 单位mm
+                            top: 10,//纸张顶边距 单位mm
+                            right: 10,//纸张右边距 单位mm
+                            bottom: 10,//纸张底边距 单位mm
+                        },
+                        // orientation: "landscape", // 页面方向 portrait纵向 landscape横向,默认为纵向
+                        // duplex: "none",// 双面打印 none单面打印，auto双面打印，long长边翻转，short短边翻转
+                        // colorMode: "grayScale",// 打印颜色模式 GrayScale灰度模式，Color彩色模式，默认为灰度模式
+                        // pageScopes: {
+                        //     from: 1,//打印页码范围，默认为1
+                        //     to: 1
+                    }
+                }),
+                success: function (data) {
+                    alert('请求成功');
+                },
+                error: function (e) {
+                    alert(e.message);
+                }
+            });
+            //打印预览
+            $.ajax({
+                url: '/preview',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    content: encodeURIComponent($('#content').html()),
+                    options: {
+                        printKey: new Date().getTime(),//可以使用业务的唯一标识，用于查询打印状态
+                        //printerName:"HP_LaserJet_400_M401dne__AFFC44_",//打印机名称可以通过调用printer_status接口获取
+                        pageRect: {
+                            width: 200,//纸张宽度 单位mm
+                            height: 80,//纸张宽度 单位mm
+                        },
+                        margins: {
+                            left: 10,//纸张左边距 单位mm
+                            top: 10,//纸张顶边距 单位mm
+                            right: 10,//纸张右边距 单位mm
+                            bottom: 10,//纸张底边距 单位mm
+                        },
+                        orientation: "landscape", // 页面方向 portrait纵向 landscape横向,默认为纵向
+                        // duplex: "none",// 双面打印 none单面打印，auto双面打印，long长边翻转，short短边翻转
+                        // colorMode: "grayScale",// 打印颜色模式 GrayScale灰度模式，Color彩色模式，默认为灰度模式
+                        // pageScopes: {
+                        //     from: 1,//打印页码范围，默认为1
+                        //     to: 1
+                        // }
+                    }
+                }),
+                success: function (data) {
+                    alert('请求成功');
+                },
+                error: function (e) {
+                    alert(e.message);
+                }
+            });
+            //直接打印
+            $.ajax({
+                url: '/direct_print',
                     type: 'POST',
                     contentType: 'application/json',
                     data: JSON.stringify({
+                        printKey: new Date().getTime(),//可以使用业务的唯一标识，用于查询打印状态
                         content: encodeURIComponent($('#content').html()),
                         options: {
-                            width: 210,//纸张宽度 单位mm
-                            height: 297,//纸张宽度 单位mm
-                            paddingLeft: 10,//纸张左边距 单位mm
-                            paddingTop: 10,//纸张顶边距 单位mm
-                            paddingRight: 10,//纸张右边距 单位mm
-                            paddingBottom: 10,//纸张底边距 单位mm
+                            pageRect: {
+                                width: 210,//纸张宽度 单位mm
+                                height: 297,//纸张宽度 单位mm
+                            },
+                            margins: {
+                                left: 10,//纸张左边距 单位mm
+                                top: 10,//纸张顶边距 单位mm
+                                right: 10,//纸张右边距 单位mm
+                                bottom: 10,//纸张底边距 单位mm
+                            },
+                            orientation: "portrait", // 页面方向 portrait纵向 landscape横向,默认为纵向
                         }
                     }),
                     success: function (data) {
@@ -66,56 +167,6 @@ python app.py
                         alert(e.message);
                     }
                 });
-            })
-            $('#btnPreview').click(() => {
-                $.ajax({
-                    url: '/preview',
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify({
-                        content: encodeURIComponent($('#content').html()),
-                        options: {
-                            width: 210,//纸张宽度 单位mm
-                            height: 297,//纸张宽度 单位mm
-                            paddingLeft: 10,//纸张左边距 单位mm
-                            paddingTop: 10,//纸张顶边距 单位mm
-                            paddingRight: 10,//纸张右边距 单位mm
-                            paddingBottom: 10,//纸张底边距 单位mm
-                        }
-                    }),
-                    success: function (data) {
-                        alert('请求成功');
-                    },
-                    error: function (e) {
-                        alert(e.message);
-                    }
-                });
-            })
-            $('#btnDirectPrint').click(() => {
-                $.ajax({
-                    url: '/direct_print',
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify({
-                        content: encodeURIComponent($('#content').html()),
-                        options: {
-                            width: 210,//纸张宽度 单位mm
-                            height: 297,//纸张宽度 单位mm
-                            paddingLeft: 10,//纸张左边距 单位mm
-                            paddingTop: 10,//纸张顶边距 单位mm
-                            paddingRight: 10,//纸张右边距 单位mm
-                            paddingBottom: 10,//纸张底边距 单位mm
-                        }
-                    }),
-                    success: function (data) {
-                        alert('请求成功');
-                    },
-                    error: function (e) {
-                        alert(e.message);
-                    }
-                });
-            })
-        })
 # 调试教程
 python vscode 调试
 
@@ -212,9 +263,7 @@ pyinstaller文档:https://pyinstaller.org/en/stable/usage.html
 打包命令
 
 pyinstaller --add-data "templates:./templates" --add-data "static:./static" --collect-all gunicorn --icon=install.icns --name dpPrinter --clean --windowed app.py 
-
-打出来的包有点大，哪位Python高手看看能否帮忙调优一下
-
+   
 mac app效果演示
 
 ![alt text](./readme/macdemo.png)
