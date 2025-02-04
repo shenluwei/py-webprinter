@@ -41,7 +41,7 @@ python app.py
     jquery 请求案例，当然你也可以使用react 或者 vue 等主流框架来发起请求
 
         //利用jquery发起异步的post请求
-        //请求格式需要用json格式发送格式为{"printKey":new Date().getTime(),"content":"encodeURIComponent后的打印内容","options":{}}
+        //请求格式需要用json格式发送格式为{"taskKey":new Date().getTime(),"content":"encodeURIComponent后的打印内容","options":{}}
 
             //获取打印机列表
             $.ajax({
@@ -73,7 +73,7 @@ python app.py
                 type: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify({
-                    printKey: new Date().getTime(),//可以使用业务的唯一标识，用于查询打印状态
+                    taskKey: new Date().getTime(),//可以使用业务的唯一标识，用于查询打印状态
                     content: encodeURIComponent($('#content').html()),
                     options: {
                         //printerName:"HP_LaserJet_400_M401dne__AFFC44_",//打印机名称可以通过调用printer_status接口获取
@@ -110,7 +110,7 @@ python app.py
                 data: JSON.stringify({
                     content: encodeURIComponent($('#content').html()),
                     options: {
-                        printKey: new Date().getTime(),//可以使用业务的唯一标识，用于查询打印状态
+                        taskKey: new Date().getTime(),//可以使用业务的唯一标识，用于查询打印状态
                         //printerName:"HP_LaserJet_400_M401dne__AFFC44_",//打印机名称可以通过调用printer_status接口获取
                         pageRect: {
                             width: 200,//纸张宽度 单位mm
@@ -144,7 +144,7 @@ python app.py
                     type: 'POST',
                     contentType: 'application/json',
                     data: JSON.stringify({
-                        printKey: new Date().getTime(),//可以使用业务的唯一标识，用于查询打印状态
+                        taskKey: new Date().getTime(),//可以使用业务的唯一标识，用于查询打印状态
                         content: encodeURIComponent($('#content').html()),
                         options: {
                             pageRect: {

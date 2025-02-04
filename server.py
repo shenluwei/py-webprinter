@@ -18,13 +18,13 @@ def createCmd(request):
     # 获取请求体中的数据
     unique_id = uuid.uuid1().hex
     # 打印的唯一口令，如果用户没传入就自动用uuid生成一个
-    printKey = request.json.get('printKey') if request.json.get('printKey') != None else unique_id
+    taskKey = request.json.get('taskKey') if request.json.get('taskKey') != None else unique_id
     # 打印的内容
     content = request.json.get('content') if request.json.get('content') != None else ""
     # 打印的选项
     options = request.json.get('options') if request.json.get('options') != None else {}
     # 返回的指令
-    cmd={"printKey":printKey,"html":unquote(content),"options":options}
+    cmd={"taskKey":taskKey,"html":unquote(content),"options":options}
     return cmd
 # 预览
 @flaskApp.route('/preview', methods=['POST'])
