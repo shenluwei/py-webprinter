@@ -87,6 +87,7 @@ python app.py
                             right: 10,//纸张右边距 单位mm
                             bottom: 10,//纸张底边距 单位mm
                         },
+                        printCount: 1,//打印份数，默认为1
                         // orientation: "landscape", // 页面方向 portrait纵向 landscape横向,默认为纵向
                         // duplex: "none",// 双面打印 none单面打印，auto双面打印，long长边翻转，short短边翻转
                         // colorMode: "grayScale",// 打印颜色模式 GrayScale灰度模式，Color彩色模式，默认为灰度模式

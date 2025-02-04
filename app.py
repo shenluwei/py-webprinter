@@ -221,7 +221,7 @@ class PrintApp(QMainWindow):
         self.delay_timer.start(5000)  # 启动定时器，延时 5000 毫秒（5 秒）
        
     #打印的核心代码
-    def printDocument(self,printer,taskKey, html):
+    def printDocument(self,printer,html):
         webView = QWebEngineView()
         webView.setFixedWidth(1)
         webView.setFixedHeight(1)
@@ -263,8 +263,11 @@ class PrintApp(QMainWindow):
         duplex = options.get('duplex')
         colorMode = options.get('colorMode')
         pageScopes = options.get('pageScopes')
+        printCount = options.get('printCount', 1)  # 默认为1份
 
         printer = QPrinter(QPrinter.PrinterMode.HighResolution)
+        # 打印份数
+        printer.setCopyCount(printCount)
         # 指定打印机
         if printerName:
             printer.setPrinterName(printerName)
@@ -337,6 +340,7 @@ class PrintApp(QMainWindow):
         printer:QPrinter=self.prepareQPrinter(taskKey,options)
 
         previewDialog = QPrintPreviewDialog(printer, self)
+        
         widgets = self.findChildren(QToolButton)
         for widget in widgets:
             if widget.text() == "Print":
@@ -345,8 +349,11 @@ class PrintApp(QMainWindow):
             def handle_print_button_clicked():
                 printTasks[taskKey]['active'] = True
             printBtn.clicked.connect(handle_print_button_clicked)
+        def handlePaintRequested(printer:QPrinter):
+            printer.setPageOrientation(printer.pageLayout().orientation())
+            self.printDocument(printer,html)
 
-        previewDialog.paintRequested.connect(lambda printer: self.printDocument(printer,taskKey,html))
+        previewDialog.paintRequested.connect(handlePaintRequested)
         previewDialog.setWindowFlags(previewDialog.windowFlags() | Qt.WindowType.WindowStaysOnTopHint)
         previewDialog.exec()
         previewDialog.raise_()
@@ -367,7 +374,7 @@ class PrintApp(QMainWindow):
 
         if dialog.exec() == QPrintDialog.DialogCode.Accepted:
             printTasks[taskKey]['active'] = True
-            self.printDocument(printer,taskKey,html)
+            self.printDocument(printer,html)
     # 直接打印
     def handleDirectPrint(self,cmd):
         taskKey = cmd.get('taskKey')
@@ -375,7 +382,7 @@ class PrintApp(QMainWindow):
         html = cmd.get('html')
         printer=self.prepareQPrinter(taskKey,options)
         printTasks[taskKey]['active'] = True
-        self.printDocument(printer,taskKey,html)
+        self.printDocument(printer,html)
        
 
     #检测预览队列
