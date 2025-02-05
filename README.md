@@ -35,7 +35,7 @@ python app.py
 域名https访问: https://localhost.dianjia.io:5443 //这个域名域名访问模式，需要开发者有自己的域名，当然也可以直接使用我们的域名
 
 ![alt text](./readme/httpdemo.png)
-
+![alt text](./readme/preview.png)
 # 调用案例
 
     jquery 请求案例，当然你也可以使用react 或者 vue 等主流框架来发起请求
