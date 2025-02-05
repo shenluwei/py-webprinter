@@ -1,7 +1,5 @@
 import os
 from flask import Flask, request, jsonify,render_template
-import tempfile
-import requests
 import uuid
 import json
 import time
@@ -77,8 +75,13 @@ class GunicornApp(BaseApplication):
 
     def load(self):
         return self.application
-
-def run_http():
+# 启动 HTTP 服务（端口 5100）
+def runHttpServer(previewQueue,printQueue,directPrintQueue,conn):
+    global preview_queue,print_queue,direct_print_queue,child_conn
+    preview_queue = previewQueue
+    print_queue = printQueue
+    direct_print_queue = directPrintQueue
+    child_conn = conn
     try:
         options = {
             "bind": ["0.0.0.0:5100"],  # 绑定 HTTP 端口
@@ -89,27 +92,16 @@ def run_http():
     except Exception as e:
         print(f"Error running HTTP server: {e}")
 
-# 启动 HTTPS 服务（端口 443）
-def run_https():
-    def downloadFileToTempfile(url):
-        # 创建一个临时文件
-        with tempfile.NamedTemporaryFile(delete=False, mode='wb') as temp_file:
-            # 发送 HTTP GET 请求下载文件
-            response = requests.get(url, stream=True, verify=False)
-            # 检查请求是否成功
-            if response.status_code == 200:
-                # 将文件内容写入临时文件
-                for chunk in response.iter_content(chunk_size=8192):
-                    temp_file.write(chunk)
-                
-                # 返回临时文件的路径
-                return temp_file.name
-            else:
-                raise Exception(f"Failed to download file. Status code: {response.status_code}")
+# 启动 HTTPS 服务（端口 5443）
+def runHttpsServer(previewQueue,printQueue,directPrintQueue,conn,keyPath,certPath):
+    global preview_queue,print_queue,direct_print_queue,child_conn,key_temp_path,cert_temp_path
+    preview_queue = previewQueue
+    print_queue = printQueue
+    direct_print_queue = directPrintQueue
+    child_conn = conn
+    key_temp_path = keyPath
+    cert_temp_path = certPath
     try:
-        # 创建一个临时文件，用于保存下载的文件
-        key_temp_path = downloadFileToTempfile('http://mugua-file.oss-cn-hangzhou.aliyuncs.com/ssl/localhost.dianjia.io.key')
-        cert_temp_path = downloadFileToTempfile('http://mugua-file.oss-cn-hangzhou.aliyuncs.com/ssl/localhost.dianjia.io.pem')
         options = {
             "bind": ["0.0.0.0:5443"],  # 绑定 HTTPS 端口
             'keyfile': key_temp_path,
@@ -121,14 +113,3 @@ def run_https():
         gunicornApp.run()
     except Exception as e:
         print(f"Error running HTTP server: {e}")
-
-def run_flask_server(https,previewQueue,printQueue,directPrintQueue,conn):
-    global preview_queue,print_queue,direct_print_queue,child_conn
-    preview_queue = previewQueue
-    print_queue = printQueue
-    direct_print_queue = directPrintQueue
-    child_conn = conn
-    if https:
-        run_https()
-    else:
-        run_http()

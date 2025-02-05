@@ -10,11 +10,12 @@ import multiprocessing
 from multiprocessing import Process, Queue,Pipe
 import json
 from server import *
+from src.certManger import *
 
 multiprocessing.freeze_support()  # 防止在 Windows 上无限递归
+
 # 打印状态
 printTasks={}
-
 # 创建队列用于进程间通信
 print_queue = Queue()
 direct_print_queue = Queue()
@@ -50,6 +51,11 @@ class PrintApp(QMainWindow):
         self.timerPrinterStatus = QTimer(self)  # 打印机状态监听器
         self.timerPrinterStatus.timeout.connect(self.checkPrintStatuses)
         self.timerPrinterStatus.start(1000) 
+
+        self.timerWatchCrtFile = QTimer(self)  # http证书文件监控
+        self.timerWatchCrtFile.timeout.connect(self.checkWatchCrtFile)
+        # 2小时监控一次
+        self.timerWatchCrtFile.start(2*60*60*1000) 
 
         self.timerCmds = QTimer(self)  # 其他指令监听器
         self.timerCmds.timeout.connect(self.cmds)
@@ -159,6 +165,7 @@ class PrintApp(QMainWindow):
 
         self.isQuit=True
         QApplication.instance().quit()
+   
     # 启动Web服务器
     def onStartWebButtonClicked(self):
         multiprocessing.freeze_support()
@@ -168,13 +175,14 @@ class PrintApp(QMainWindow):
             self.startWebButton.setEnabled(False)
             self.stopWebButton.setEnabled(True)
             return
-
+        
         # 启动 HTTP 服务
-        self.httpProcess = Process(target=run_flask_server, args=(False,preview_queue,print_queue,direct_print_queue,child_conn))
+        self.httpProcess = Process(target=runHttpServer, args=(preview_queue,print_queue,direct_print_queue,child_conn,))
         self.httpProcess.daemon = True  # 设置为守护进程
         self.httpProcess.start()
+
         # 启动 HTTPS 服务
-        self.httpsProcess = Process(target=run_flask_server, args=(True,preview_queue,print_queue,direct_print_queue,child_conn))
+        self.httpsProcess = Process(target=runHttpsServer, args=(preview_queue,print_queue,direct_print_queue,child_conn,key_temp_path,cert_temp_path,))
         self.httpsProcess.daemon = True  # 设置为守护进程
         self.httpsProcess.start()
 
@@ -186,7 +194,6 @@ class PrintApp(QMainWindow):
         self.delay_timer.setSingleShot(True)  # 设置为单次触发
 
         def startDelayActions():
-            self.delay_timer.stop()
             self.delay_timer=None
             self.textEdit.setText("启动成功，正在等待打印请求...")
             self.stopWebButton.setEnabled(True)
@@ -207,7 +214,6 @@ class PrintApp(QMainWindow):
         self.delay_timer.setSingleShot(True)  # 设置为单次触发
 
         def stopDelayActions():
-            self.delay_timer.stop()
             self.delay_timer=None
             # 在这里执行延时后的操作
             self.httpProcess = None
@@ -467,6 +473,29 @@ class PrintApp(QMainWindow):
                 })
             parent_conn.send(json.dumps(printInfos))
 
+    # 监听证书更新
+    def checkWatchCrtFile(self):
+        if isCertFileChanged():
+            # 重启HTTPS服务
+            if self.httpsProcess != None and self.httpsProcess.is_alive():
+                self.httpsProcess.kill()  # 强制终止子进程
+                self.httpsProcess=None
+            # 创建一个 QTimer 实例
+            self.delay_timer = QTimer(self)
+            self.delay_timer.setSingleShot(True)  # 设置为单次触发
+            
+            def restartActions():
+                self.delay_timer=None
+                # 启动 HTTPS 服务
+                self.httpsProcess = Process(target=runHttpsServer, args=(preview_queue,print_queue,direct_print_queue,child_conn,key_temp_path,cert_temp_path,))
+                self.httpsProcess.daemon = True  # 设置为守护进程
+                self.httpsProcess.start()
+
+            self.delay_timer.timeout.connect(restartActions)  # 连接槽函数
+            self.delay_timer.start(5000)  # 启动定时器，延时 5000 毫秒（5 秒）
+        
+            return
+        
 if __name__ == '__main__':
     try:
         app = QApplication(sys.argv)
