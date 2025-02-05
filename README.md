@@ -30,9 +30,9 @@ python app.py
 
 本地https访问: https://127.0.0.1:5443
 
-域名http访问: http://localhost.dianjia.io:5100 //这个域名域名访问模式，需要开发者有自己的域名，当然也可以直接使用我们的域名
+域名http访问: http://localhost.dianjia.io:5100 //这个域名是一个很特殊的域名，ip是解析到127.0.0.1的，需要开发者可以用自己域名制作一条A记录指向本地ip，当然也可以直接使用我们的域名
 
-域名https访问: https://localhost.dianjia.io:5443 //这个域名域名访问模式，需要开发者有自己的域名，当然也可以直接使用我们的域名
+域名https访问: https://localhost.dianjia.io:5443 //这个域名是一个很特殊的域名，ip是解析到127.0.0.1的，需要开发者可以用自己域名制作一条A记录指向本地ip，当然也可以直接使用我们的域名，我们会定期更新HTTPS证书
 
 # 访问效果
 ![alt text](./readme/httpdemo.png)
