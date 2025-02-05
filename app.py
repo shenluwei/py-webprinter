@@ -1,10 +1,10 @@
 import sys
 import os
-import fcntl
+import portalocker
 from PyQt6.QtGui import QIcon,QAction,QPageLayout, QPageSize
 from PyQt6.QtCore import QTimer,Qt,QEventLoop,QSizeF,QMarginsF
 from PyQt6.QtWidgets import QApplication,QMainWindow,QSystemTrayIcon,QTextEdit, QVBoxLayout
-from PyQt6.QtWidgets import QWidget, QPushButton,QSystemTrayIcon, QMenu, QMessageBox,QToolButton
+from PyQt6.QtWidgets import QWidget, QPushButton,QSystemTrayIcon, QMenu, QMessageBox,QToolButton,QCheckBox
 from PyQt6.QtPrintSupport import QPrinter, QPrintDialog,QPrintPreviewDialog,QPrinterInfo
 from PyQt6.QtWebEngineWidgets import QWebEngineView
 import multiprocessing
@@ -12,6 +12,7 @@ from multiprocessing import Process, Queue,Pipe
 import json
 from server import *
 from src.certManger import *
+from src.autoStartup import *
 
 multiprocessing.freeze_support()  # 防止在 Windows 上无限递归
 
@@ -73,22 +74,27 @@ class PrintApp(QMainWindow):
         self.stopWebButton.clicked.connect(self.onStopWebButtonClicked)
 
         # 创建菜单栏
-        menubar = self.menuBar()
-        # 创建文件菜单
-        fileMenu = menubar.addMenu('文件')
-        # 添加打印预览动作
-        printPreviewAction = QAction('打印预览', self)
-        printPreviewAction.triggered.connect(self.handlePrintPreview)
-        fileMenu.addAction(printPreviewAction)
+        # menubar = self.menuBar()
+        # # 创建文件菜单
+        # fileMenu = menubar.addMenu('文件')
+        # # 添加打印预览动作
+        # printPreviewAction = QAction('打印预览', self)
+        # printPreviewAction.triggered.connect(self.handlePrintPreview)
+        # fileMenu.addAction(printPreviewAction)
 
         self.textEdit = QTextEdit()
         self.textEdit.setText("正在等待打印请求...")
         self.textEdit.setReadOnly(True)
         self.textEdit.setFixedHeight(50)
-        # layout.addWidget(self.textPathEdit)
+        if platform.system() == "Windows":
+            self.startupCheckBox = QCheckBox('开机自启动', self)
+            self.startupCheckBox.setChecked(get_startup())
+            self.startupCheckBox.stateChanged.connect(onStartupCheckBoxChanged)
+            layout.addWidget(self.startupCheckBox)
         layout.addWidget(self.textEdit)
         layout.addWidget(self.startWebButton)
         layout.addWidget(self.stopWebButton)
+
         self.mainLayout = layout
         centralWidget.setLayout(layout)
         self.setCentralWidget(centralWidget)
@@ -98,7 +104,7 @@ class PrintApp(QMainWindow):
         self.httpProcess=None
         self.httpsProcess=None
         self.isQuit=False
-
+    
     # 创建系统托盘图标
     def createTrayIcon(self):
         self.trayIcon = QSystemTrayIcon(self)
@@ -496,35 +502,50 @@ class PrintApp(QMainWindow):
             self.delay_timer.start(5000)  # 启动定时器，延时 5000 毫秒（5 秒）
         
             return
-def is_already_running():
-    lock_file = "/tmp/printapp.lock"
-    fd = os.open(lock_file, os.O_CREAT | os.O_RDWR)
+def prevent_multiple_instances(lock_file):
     try:
-        fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
-        return False
-    except IOError:
-        return True
+        # 打开文件并尝试获取锁
+        file = open(lock_file, 'w')
+        portalocker.lock(file, portalocker.LOCK_EX | portalocker.LOCK_NB)
+        print("Lock acquired, starting the application...")
+        return file
+    except (IOError, portalocker.AlreadyLocked):
+        print("Another instance is already running. Exiting...")
+        sys.exit(1)
+
+def release_lock(file):
+    # 释放锁并关闭文件
+    portalocker.unlock(file)
+    file.close()
+    print("Lock released.")
     
+# 获取临时目录路径
+temp_dir = tempfile.gettempdir()
+# 构建锁定文件的完整路径
+lock_file = os.path.join(temp_dir, "app.lock")
+
 if __name__ == '__main__':
-    if is_already_running():
-        print("程序已经在运行")
-        try:
+    
+    # 尝试获取锁
+    file = prevent_multiple_instances(lock_file)
+    
+    try:
+        app = QApplication(sys.argv)
+        app.setWindowIcon(QIcon(run_path+'/static/logo.png'))
+        app.setQuitOnLastWindowClosed(False)
+        # 确保系统托盘支持可用
+        if not QSystemTrayIcon.isSystemTrayAvailable():
+            QMessageBox.critical(None, "Systray", "I couldn't detect any system tray on this system.")
             sys.exit(1)
-        except Exception as e:
-            pass
-    else:
-        try:
-            app = QApplication(sys.argv)
-            app.setWindowIcon(QIcon(run_path+'/static/logo.png'))
-            app.setQuitOnLastWindowClosed(False)
-            # 确保系统托盘支持可用
-            if not QSystemTrayIcon.isSystemTrayAvailable():
-                QMessageBox.critical(None, "Systray", "I couldn't detect any system tray on this system.")
-                sys.exit(1)
-            # 启动PyQt6主应用
-            ex = PrintApp(preview_queue,print_queue,direct_print_queue)
-            ex.onStartWebButtonClicked()
-            sys.exit(app.exec())
-        except Exception as e:
-            sys.exit(1)
+        # 启动PyQt6主应用
+        ex = PrintApp(preview_queue,print_queue,direct_print_queue)
+        ex.onStartWebButtonClicked()
+        sys.exit(app.exec())
+    except Exception as e:
+        sys.exit(1)
+    finally:
+        # 释放锁
+        release_lock(file)
+        # 删除锁文件
+        os.remove(lock_file)
     

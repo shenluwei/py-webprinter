@@ -265,10 +265,10 @@ pyinstaller文档:https://pyinstaller.org/en/stable/usage.html
 打包命令
 
 mac 打包命令
-pyinstaller --add-data "templates:./templates" --add-data "static:./static" --icon=install.icns --name dpPrinter --clean --windowed app.py 
+pyinstaller --add-data "templates:./templates" --add-data "static:./static" --icon=install.icns --name DplusPrinter --clean --windowed app.py 
 
 windows打包命令
-pyinstaller --add-data "templates:./templates" --add-data "static:./static" --icon=install.ico --name dpPrinter --onefile --clean --windowed app.py 
+pyinstaller --add-data "templates:./templates" --add-data "static:./static" --icon=install.ico --name DplusPrinter --onefile --clean --windowed app.py 
    
 mac app效果演示
 
