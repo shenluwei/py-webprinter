@@ -108,8 +108,8 @@ def run_https():
                 raise Exception(f"Failed to download file. Status code: {response.status_code}")
     try:
         # 创建一个临时文件，用于保存下载的文件
-        key_temp_path = downloadFileToTempfile('http://mugua-file.oss-cn-hangzhou.aliyuncs.com/ssl/private_key.pem')
-        cert_temp_path = downloadFileToTempfile('http://mugua-file.oss-cn-hangzhou.aliyuncs.com/ssl/certificate.pem')
+        key_temp_path = downloadFileToTempfile('http://mugua-file.oss-cn-hangzhou.aliyuncs.com/ssl/localhost.dianjia.io.key')
+        cert_temp_path = downloadFileToTempfile('http://mugua-file.oss-cn-hangzhou.aliyuncs.com/ssl/localhost.dianjia.io.pem')
         options = {
             "bind": ["0.0.0.0:5443"],  # 绑定 HTTPS 端口
             'keyfile': key_temp_path,
