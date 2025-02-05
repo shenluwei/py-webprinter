@@ -1,5 +1,6 @@
 import sys
 import os
+import fcntl
 from PyQt6.QtGui import QIcon,QAction,QPageLayout, QPageSize
 from PyQt6.QtCore import QTimer,Qt,QEventLoop,QSizeF,QMarginsF
 from PyQt6.QtWidgets import QApplication,QMainWindow,QSystemTrayIcon,QTextEdit, QVBoxLayout
@@ -495,20 +496,35 @@ class PrintApp(QMainWindow):
             self.delay_timer.start(5000)  # 启动定时器，延时 5000 毫秒（5 秒）
         
             return
-        
-if __name__ == '__main__':
+def is_already_running():
+    lock_file = "/tmp/printapp.lock"
+    fd = os.open(lock_file, os.O_CREAT | os.O_RDWR)
     try:
-        app = QApplication(sys.argv)
-        app.setWindowIcon(QIcon(run_path+'/static/logo.png'))
-        app.setQuitOnLastWindowClosed(False)
-        # 确保系统托盘支持可用
-        if not QSystemTrayIcon.isSystemTrayAvailable():
-            QMessageBox.critical(None, "Systray", "I couldn't detect any system tray on this system.")
+        fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        return False
+    except IOError:
+        return True
+    
+if __name__ == '__main__':
+    if is_already_running():
+        print("程序已经在运行")
+        try:
             sys.exit(1)
-        # 启动PyQt6主应用
-        ex = PrintApp(preview_queue,print_queue,direct_print_queue)
-        ex.onStartWebButtonClicked()
-        sys.exit(app.exec())
-    except Exception as e:
-        sys.exit(1)
+        except Exception as e:
+            pass
+    else:
+        try:
+            app = QApplication(sys.argv)
+            app.setWindowIcon(QIcon(run_path+'/static/logo.png'))
+            app.setQuitOnLastWindowClosed(False)
+            # 确保系统托盘支持可用
+            if not QSystemTrayIcon.isSystemTrayAvailable():
+                QMessageBox.critical(None, "Systray", "I couldn't detect any system tray on this system.")
+                sys.exit(1)
+            # 启动PyQt6主应用
+            ex = PrintApp(preview_queue,print_queue,direct_print_queue)
+            ex.onStartWebButtonClicked()
+            sys.exit(app.exec())
+        except Exception as e:
+            sys.exit(1)
     
