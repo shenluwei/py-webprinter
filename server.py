@@ -3,7 +3,7 @@ from flask import Flask, request, jsonify,render_template
 import uuid
 import json
 import time
-from gunicorn.app.base import BaseApplication
+# from gunicorn.app.base import BaseApplication
 from urllib.parse import unquote
 
 # Flask Web服务器定义
@@ -61,20 +61,20 @@ def print_tasks():
     result=sendCmd("print_tasks" )
     return jsonify({"success": True, "printTasks": json.loads(result)}), 200
 
-class GunicornApp(BaseApplication):
-    def __init__(self, app, options=None):
-        self.options = options or {}
-        self.application = app
-        super().__init__()
+# class GunicornApp(BaseApplication):
+#     def __init__(self, app, options=None):
+#         self.options = options or {}
+#         self.application = app
+#         super().__init__()
 
-    def load_config(self):
-        config = {key: value for key, value in self.options.items()
-                  if key in self.cfg.settings and value is not None}
-        for key, value in config.items():
-            self.cfg.set(key.lower(), value)
+#     def load_config(self):
+#         config = {key: value for key, value in self.options.items()
+#                   if key in self.cfg.settings and value is not None}
+#         for key, value in config.items():
+#             self.cfg.set(key.lower(), value)
 
-    def load(self):
-        return self.application
+#     def load(self):
+#         return self.application
 # 启动 HTTP 服务（端口 5100）
 def runHttpServer(previewQueue,printQueue,directPrintQueue,conn):
     global preview_queue,print_queue,direct_print_queue,child_conn
@@ -83,12 +83,13 @@ def runHttpServer(previewQueue,printQueue,directPrintQueue,conn):
     direct_print_queue = directPrintQueue
     child_conn = conn
     try:
-        options = {
-            "bind": ["0.0.0.0:5100"],  # 绑定 HTTP 端口
-            "graceful-timeout": 1,  # 超时时间
-        }
-        gunicornApp = GunicornApp(flaskApp, options)
-        gunicornApp.run()
+        # options = {
+        #     "bind": ["0.0.0.0:5100"],  # 绑定 HTTP 端口
+        #     "graceful-timeout": 1,  # 超时时间
+        # }
+        # gunicornApp = GunicornApp(flaskApp, options)
+        # gunicornApp.run()
+        flaskApp.run(host='0.0.0.0', port=5100)
     except Exception as e:
         print(f"Error running HTTP server: {e}")
 
@@ -102,14 +103,15 @@ def runHttpsServer(previewQueue,printQueue,directPrintQueue,conn,keyPath,certPat
     key_temp_path = keyPath
     cert_temp_path = certPath
     try:
-        options = {
-            "bind": ["0.0.0.0:5443"],  # 绑定 HTTPS 端口
-            'keyfile': key_temp_path,
-            'certfile': cert_temp_path,
-            "workers": 2,
-            "graceful-timeout": 1,  # 超时时间
-        }
-        gunicornApp = GunicornApp(flaskApp, options)
-        gunicornApp.run()
+        # options = {
+        #     "bind": ["0.0.0.0:5443"],  # 绑定 HTTPS 端口
+        #     'keyfile': key_temp_path,
+        #     'certfile': cert_temp_path,
+        #     "workers": 2,
+        #     "graceful-timeout": 1,  # 超时时间
+        # }
+        # gunicornApp = GunicornApp(flaskApp, options)
+        # gunicornApp.run()
+        flaskApp.run(host='0.0.0.0', ssl_context=(cert_temp_path,key_temp_path), port=5443)
     except Exception as e:
         print(f"Error running HTTP server: {e}")

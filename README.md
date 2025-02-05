@@ -252,9 +252,6 @@ flask
 # http请求库
 requests 
 
-# 轻量级生产web框架
-gunicorn 
-
 # 可执行文件打包工具
 
 pyinstaller 
@@ -267,7 +264,11 @@ pyinstaller文档:https://pyinstaller.org/en/stable/usage.html
 
 打包命令
 
-pyinstaller --add-data "templates:./templates" --add-data "static:./static" --collect-all gunicorn --icon=install.icns --name dpPrinter --clean --windowed app.py 
+mac 打包命令
+pyinstaller --add-data "templates:./templates" --add-data "static:./static" --icon=install.icns --name dpPrinter --clean --windowed app.py 
+
+windows打包命令
+pyinstaller --add-data "templates:./templates" --add-data "static:./static" --icon=install.ico --name dpPrinter --onefile --clean --windowed app.py 
    
 mac app效果演示
 
