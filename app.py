@@ -86,7 +86,7 @@ class PrintApp(QMainWindow):
         self.textEdit.setText("正在等待打印请求...")
         self.textEdit.setReadOnly(True)
         self.textEdit.setFixedHeight(50)
-        if platform.system() == "Windows":
+        if platform.system() == "Windows" or platform.system() == "Darwin":
             self.startupCheckBox = QCheckBox('开机自启动', self)
             self.startupCheckBox.setChecked(get_startup())
             self.startupCheckBox.stateChanged.connect(onStartupCheckBoxChanged)

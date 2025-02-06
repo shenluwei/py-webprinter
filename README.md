@@ -265,7 +265,13 @@ pyinstaller文档:https://pyinstaller.org/en/stable/usage.html
 打包命令
 
 mac 打包命令
-pyinstaller --add-data "templates:./templates" --add-data "static:./static" --icon=install.icns --name DplusPrinter --clean --windowed app.py 
+pyinstaller --add-data "templates:./templates" --add-data "static:./static" --icon=install.icns --name DplusPrinter --clean --windowed app.py
+
+制作成pkg
+cd dist
+pkgbuild --component "DplusPrinter.app" --identifier cn.dianplus.DplusPrinter --version 1.0 --install-location /Applications DplusPrinter.pkg
+productbuild --synthesize --package DplusPrinter.pkg Distribution.xml
+productbuild --distribution Distribution.xml --package-path . DpulsPrinterInstaller.pkg 
 
 windows打包命令
 pyinstaller --add-data "templates:./templates" --add-data "static:./static" --icon=install.ico --name DplusPrinter --onefile --clean --windowed app.py 
