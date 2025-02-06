@@ -231,9 +231,9 @@ A记录：localhost->127.0.0.1
 
 更新的证书店加公司会定期发布到OSS对应的公开目录，当然这个文件可以自己另行处理
 
-http://mugua-file.oss-cn-hangzhou.aliyuncs.com/ssl/localhost.dianjia.io.key
+https://file.dianplus.cn/ssl/localhost.dianjia.io.key
     
-http://mugua-file.oss-cn-hangzhou.aliyuncs.com/ssl/localhost.dianjia.io.pem
+https://file.dianplus.cn/ssl/localhost.dianjia.io.pem
 
 # 依赖介绍
 # 强大的GUI 框架 

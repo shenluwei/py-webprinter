@@ -1,8 +1,8 @@
 import tempfile
 import requests
 
-httpKeyPath = 'http://mugua-file.oss-cn-hangzhou.aliyuncs.com/ssl/localhost.dianjia.io.key'
-httpCertPath = 'http://mugua-file.oss-cn-hangzhou.aliyuncs.com/ssl/localhost.dianjia.io.pem'
+httpKeyPath = 'https://file.dianplus.cn/ssl/localhost.dianjia.io.key'
+httpCertPath = 'https://file.dianplus.cn/ssl/localhost.dianjia.io.pem'
 
 certFileCaches={}
 # 下载文件到临时文件
